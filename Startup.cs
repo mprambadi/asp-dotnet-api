@@ -32,9 +32,8 @@ namespace dotnet_mediatr
         {
             services.AddControllers();
             services.AddMvc()
-                    .AddFluentValidation();
+                    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatorValidator>());
 
-            services.AddTransient<IValidator<Creator>, CreatorValidator>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidator<,>));
         }
 
