@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using dotnet_mediatr.Domain.Entity;
+using dotnet_mediatr.Domain.Entities;
 using dotnet_mediatr.Application.Interfaces;
 
 namespace dotnet_mediatr.Infrastructure.Persistence

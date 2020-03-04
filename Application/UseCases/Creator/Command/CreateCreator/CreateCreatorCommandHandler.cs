@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using dotnet_mediatr.Application.Interfaces;
 using dotnet_mediatr.Application.UseCases.Creator.Models;
 using Microsoft.EntityFrameworkCore;
-using dotnet_mediatr.Domain.Entity;
 using MediatR;
 
 namespace dotnet_mediatr.Application.UseCases.Creator.Command.CreateCreator
@@ -19,7 +18,7 @@ namespace dotnet_mediatr.Application.UseCases.Creator.Command.CreateCreator
         public async Task<CreateCreatorCommandDto> Handle(CreateCreatorCommand request, CancellationToken cancellationToken)
         {
 
-            var creator = new Domain.Entity.Creator
+            var creator = new Domain.Entities.Creator
             {
                 name = request.Data.Name,
                 age = request.Data.Age

@@ -1,6 +1,6 @@
 using System;
 
-namespace dotnet_mediatr.Domain.Entity
+namespace dotnet_mediatr.Domain.Entities
 {
     public class Creator
     {

@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using dotnet_mediatr.Domain.Entity;
+using dotnet_mediatr.Domain.Entities;
 using dotnet_mediatr.Application.Interfaces;
 using dotnet_mediatr.Infrastructure.Persistence;
 using dotnet_mediatr.Application.Infrastructures;
