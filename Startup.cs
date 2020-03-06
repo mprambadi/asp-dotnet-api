@@ -17,6 +17,8 @@ using dotnet_mediatr.Domain.Entities;
 using dotnet_mediatr.Application.Interfaces;
 using dotnet_mediatr.Infrastructure.Persistence;
 using dotnet_mediatr.Application.Infrastructures;
+using dotnet_mediatr.Infrastructure.BackgroundServices.Scheduler;
+using dotnet_mediatr.Infrastructure.BackgroundServices.Queue;
 using Microsoft.EntityFrameworkCore;
 using dotnet_mediatr.Application.UseCases.Creator.Queries.GetCreator;
 using MediatR;
@@ -39,11 +41,13 @@ namespace dotnet_mediatr
 
             services.AddMediatR(typeof(GetCreatorQueryHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidatorBehaviour<,>));
-
             services.AddDbContext<IBlogContext, BlogContext>(options => options.UseNpgsql("Host=127.0.0.1;Username=postgres;Password=password;Database=blog"));
 
             services.AddMvc()
                     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<GetCreatorValidator>());
+            
+            services.AddHostedService<DailyGreetings>();
+            // services.AddHostedService<ReceiverQueue>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
