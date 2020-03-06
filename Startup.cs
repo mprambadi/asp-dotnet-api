@@ -22,7 +22,9 @@ using dotnet_mediatr.Infrastructure.BackgroundServices.Queue;
 using Microsoft.EntityFrameworkCore;
 using dotnet_mediatr.Application.UseCases.Creator.Queries.GetCreator;
 using MediatR;
-
+using Hangfire;
+using Hangfire.AspNetCore;
+using Hangfire.SqlServer;
 namespace dotnet_mediatr
 {
     public class Startup
@@ -39,24 +41,46 @@ namespace dotnet_mediatr
         {
             services.AddControllers();
 
+            services.AddHangfire(configuration => configuration
+
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    UsePageLocksOnDequeue = true,
+                    DisableGlobalLocks = true
+                }
+            ));
+
+            services.AddHangfireServer();
+
             services.AddMediatR(typeof(GetCreatorQueryHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidatorBehaviour<,>));
-            services.AddDbContext<IBlogContext, BlogContext>(options => options.UseNpgsql("Host=127.0.0.1;Username=postgres;Password=password;Database=blog"));
+            services.AddDbContext<IBlogContext, BlogContext>(options => options.UseNpgsql(Configuration.GetConnectionString("PosgreServer")));
 
             services.AddMvc()
                     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<GetCreatorValidator>());
-            
-            services.AddHostedService<DailyGreetings>();
+
+            // services.AddHostedService<DailyGreetings>();
             // services.AddHostedService<ReceiverQueue>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJob)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHangfireDashboard();
+
+            backgroundJob.Enqueue(() => Console.WriteLine("Task Run"));
 
             // app.UseHttpsRedirection();
 
