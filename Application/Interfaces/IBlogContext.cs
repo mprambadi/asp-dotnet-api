@@ -7,7 +7,6 @@ namespace dotnet_mediatr.Application.Interfaces
 {
     public interface IBlogContext
     {
-        DbSet<Creator> Creators { get; set; }
         DbSet<Post> Posts { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

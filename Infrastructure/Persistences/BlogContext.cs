@@ -8,7 +8,6 @@ namespace dotnet_mediatr.Infrastructure.Persistence
     {
         public BlogContext(DbContextOptions<BlogContext> options) : base(options) { }
 
-        public DbSet<Creator> Creators { get; set; }
         public DbSet<Post> Posts { get; set; }
     }
 

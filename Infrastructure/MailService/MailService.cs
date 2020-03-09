@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using System;
 using MimeKit;
 using MailKit.Net.Smtp;
-using Microsoft.Extensions.Logging;
 
 namespace dotnet_mediatr.Infrastructure.MailServices
 {

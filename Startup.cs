@@ -19,8 +19,8 @@ using dotnet_mediatr.Infrastructure.Persistence;
 using dotnet_mediatr.Application.Infrastructures;
 using dotnet_mediatr.Infrastructure.BackgroundServices.Scheduler;
 using dotnet_mediatr.Infrastructure.BackgroundServices.Queue;
+using dotnet_mediatr.Application.UseCases.Post.Queries.GetPost;
 using Microsoft.EntityFrameworkCore;
-using dotnet_mediatr.Application.UseCases.Creator.Queries.GetCreator;
 using MediatR;
 using Hangfire;
 using Hangfire.AspNetCore;
@@ -59,12 +59,12 @@ namespace dotnet_mediatr
 
             services.AddHangfireServer();
 
-            services.AddMediatR(typeof(GetCreatorQueryHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(GetPostQuery).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidatorBehaviour<,>));
             services.AddDbContext<IBlogContext, BlogContext>(options => options.UseNpgsql(Configuration.GetConnectionString("PosgreServer")));
 
             services.AddMvc()
-                    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<GetCreatorValidator>());
+                    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<GetPostQueryValidator>());
 
             // services.AddHostedService<DailyGreetings>();
             // services.AddHostedService<ReceiverQueue>();
