@@ -1,3 +1,4 @@
+using System.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using dotnet_mediatr.Entity;
-using dotnet_mediatr.Validators;
+using dotnet_mediatr.Domain.Entities;
+using dotnet_mediatr.Application.Interfaces;
+using dotnet_mediatr.Infrastructure.Persistence;
+using dotnet_mediatr.Application.Infrastructures;
+using Microsoft.EntityFrameworkCore;
+using dotnet_mediatr.Application.UseCases.Creator.Queries.GetCreator;
 using MediatR;
 
 namespace dotnet_mediatr
@@ -31,10 +36,14 @@ namespace dotnet_mediatr
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddMvc()
-                    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatorValidator>());
 
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidator<,>));
+            services.AddMediatR(typeof(GetCreatorQueryHandler).GetTypeInfo().Assembly);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidatorBehaviour<,>));
+
+            services.AddDbContext<IBlogContext, BlogContext>(options => options.UseNpgsql("Host=127.0.0.1;Username=postgres;Password=password;Database=blog"));
+
+            services.AddMvc()
+                    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<GetCreatorValidator>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
